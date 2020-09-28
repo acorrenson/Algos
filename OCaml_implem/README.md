@@ -1,1 +1,1 @@
-# OCaml implementation of usefull algorithms
+# OCaml implementation of useful algorithms

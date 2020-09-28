@@ -1,1 +1,1 @@
-# Python implementation of usefull algorithms
+# Python implementation of useful algorithms

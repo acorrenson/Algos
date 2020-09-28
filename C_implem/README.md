@@ -1,1 +1,1 @@
-# C implementation of usefull algorithms
+# C implementation of useful algorithms
