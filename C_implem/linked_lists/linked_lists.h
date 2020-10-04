@@ -15,8 +15,6 @@ typedef struct int_list_t {
 
 int_list_t* create_empty_int_list(void);
 
-int_cell_t* create_int_cell(int val);
-
 // Modification
 
 int pop_int_list(int_list_t* list);
@@ -30,5 +28,7 @@ void destroy_int_list(int_list_t* list);
 void empty_int_list(int_list_t* list);
 
 // Visualisation
+
+int length_int_list(int_list_t* list);
 
 void print_int_list(int_list_t* list);
