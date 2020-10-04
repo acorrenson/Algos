@@ -1,1 +1,8 @@
 (lang dune 2.4)
+
+(name algos)
+
+(generate_opam_files true)
+(source (github jdrprod/Algos))
+(license MIT)
+(authors "Igor Martayan" "Arthur Correnson")
