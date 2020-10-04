@@ -35,6 +35,7 @@ int pop_int_list(int_list_t* list) {  //list has to not be empty
     int hd = list->cell->head;
     int_cell_t* old_cell = list->cell;
     list->cell = list->cell->tail;
+    free(old_cell);
     return hd;
 }
 
