@@ -33,6 +33,7 @@ int_cell_t* create_int_cell(int val) {
 
 int pop_int_list(int_list_t* list) {  //list has to not be empty
     int hd = list->cell->head;
+    int_cell_t* old_cell = list->cell;
     list->cell = list->cell->tail;
     return hd;
 }
@@ -43,6 +44,17 @@ void append_int_list(int val, int_list_t* list) {
     list->cell = new_cell;
 }
 
+void destroy_int_cells(int_cell_t* cell) {
+    if (cell != NULL) {
+        destroy_int_cells(cell->tail);
+        free(cell);
+    }
+}
+
+void destroy_int_list(int_list_t* list) {
+    destroy_int_cells(list->cell);
+    free(list);
+}
 // Visualisation
 
 void print_int_list(int_list_t* list) {

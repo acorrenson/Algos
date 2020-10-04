@@ -23,6 +23,7 @@ int pop_int_list(int_list_t* list);
 
 void append_int_list(int val, int_list_t* list);
 
+void destroy_int_list(int_list_t* list);
 // Visualisation
 
 void print_int_list(int_list_t* list);
