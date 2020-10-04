@@ -1,0 +1,3 @@
+# Ignore all in build forlder (exept the gitkeep file)
+/build/*
+!/build/.gitkeep
