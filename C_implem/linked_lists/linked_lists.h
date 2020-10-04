@@ -21,9 +21,14 @@ int_cell_t* create_int_cell(int val);
 
 int pop_int_list(int_list_t* list);
 
+void insert_head_int_list(int val, int_list_t* list);
+
 void append_int_list(int val, int_list_t* list);
 
 void destroy_int_list(int_list_t* list);
+
+void empty_int_list(int_list_t* list);
+
 // Visualisation
 
 void print_int_list(int_list_t* list);
