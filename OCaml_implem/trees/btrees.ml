@@ -40,6 +40,8 @@ let nd a b c = Node (b, a, c)
 (** Terminal node constructor *)
 let lf a = nd a Leaf Leaf
 
+(** [dump str t f] dumps the tree [t] in the dot file [f].
+    Values are stringified using [str]. *)
 let dump str t f =
   let out = open_out f in
   let rec step = function
