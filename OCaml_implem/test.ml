@@ -33,4 +33,5 @@ let _ =
       let sr = 2*i + 2 in
       if sl < length a then assert (a.(sl) <= a.(i));
       if sr < length a then assert (a.(sr) <= a.(i));
+      Printf.printf "Assert on node %d passed\n" i
     ) a)

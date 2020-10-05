@@ -15,7 +15,7 @@ let sonl i = 2*i + 1
 let sonr i = 2*i + 2
 
 (* Restore the heap in [i]
-   assuming that subtrees left and right*)
+   assuming that subtrees *)
 let rec heapify h i : unit =
   let imax = List.fold_left (fun acc j ->
       if get h.values j >= get h.values acc
@@ -53,7 +53,6 @@ let insert h v =
   h.size <- h.size + 1
 
 let to_array h =
-  let open Resizable_array in
   Array.init h.size (get h.values)
 
 let dump h =
