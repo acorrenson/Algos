@@ -9,17 +9,15 @@ type 'a binomial_tree = {
   children: 'a binomial_heap
 }
 
-(** We implements binomial heaps as list of binomial trees *)
+(** We implements binomial heaps as lists of binomial trees *)
 and 'a binomial_heap = 'a binomial_tree list
 
 (** Insert a binomial tree in a binomial heap *)
-let rec insert_tree a h =
-  let rec ins a = function
-    | [] -> [a]
-    | b::t -> if a.order < b.order then a::b::t
-      else if b.order < a.order then b::(ins a t)
-      else ins (merge_tree a b) t
-  in ins a h
+let rec insert_tree a = function
+  | [] -> [a]
+  | b::t -> if a.order < b.order then a::b::t
+    else if b.order < a.order then b::(insert_tree a t)
+    else insert_tree (merge_tree a b) t
 
 (** Merge two binomial trees *)
 and merge_tree a b =
@@ -58,4 +56,3 @@ let insert x h = insert_tree (singleton x) h
 
 (** Insert a list of elements in a binomial heap *)
 let insert_list l h = List.fold_right insert l h
-
