@@ -174,7 +174,7 @@ impl<K: Ord, V> BinomialTree<K, V> {
     fn order(&self) -> usize {
         match self {
             BinomialTree::Nil => 0,
-            BinomialTree::Node(_, _, c) => c.len(),
+            BinomialTree::Node(_, _, c) => c.len() + 1,
         }
     }
 }
