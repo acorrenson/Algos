@@ -3,14 +3,12 @@ type 'a t = {
   mutable values : 'a Array.t;
 }
 
-let get a i = 
-  (* if i >= Array.length a.values then a.default *)
-  a.values.(i)
+let get a i = a.values.(i)
 
 let set a i v =
   let old_array = a.values in
   let old_len = Array.length old_array in
-  if i >= old_len then begin
+  if i = old_len then begin
     a.values <- Array.make (2 * old_len) a.default;
     Array.blit old_array 0 a.values 0 old_len;
     a.values.(i) <- v

@@ -5,16 +5,26 @@ type 'a t = {
   values : 'a Resizable_array.t;
 }
 
+(* Get the parent of a given index *)
+let parent i = (i - 1)/2
+
+(* Get the right son of a given index *)
+let sonl i = 2*i + 1
+
+(* Get the left son of a given index *)
+let sonr i = 2*i + 2
+
+(* Restore the heap in [i]
+   assuming that subtrees left and right*)
 let rec heapify h i : unit =
-  let i' = i + 1 in
   let imax = List.fold_left (fun acc j ->
-      if get h.values (j - 1) >= get h.values (acc - 1)
+      if get h.values j >= get h.values acc
       then j else acc
-    ) i' ([2*i'; 2*i' + 1] |> List.filter ((>=) (h.size)))
+    ) i ([sonl i; sonr i] |> List.filter ((>) (h.size)))
   in
-  if imax <> i' then begin
-    swap h.values i (imax - 1);
-    heapify h (imax - 1)
+  if imax <> i then begin
+    swap h.values i imax;
+    heapify h imax
   end
 
 
@@ -28,13 +38,13 @@ let of_array a =
   h
 
 let sift_up h i =
-  let p = ref (i/2) in
+  let p = ref (parent i) in
   let c = ref i in
   let v = get h.values i in
   while (!c > 0 && get h.values !p <= v) do
     swap h.values !p !c;
-    p := !p / 2;
-    c := !c / 2;
+    p := parent !p;
+    c := parent !c;
   done
 
 let insert h v =
@@ -42,17 +52,18 @@ let insert h v =
   sift_up h h.size;
   h.size <- h.size + 1
 
-let dump h =
-  Printf.printf "digraph {\n";
+let to_array h =
   let open Resizable_array in
+  Array.init h.size (get h.values)
 
-  iter (fun v -> Printf.printf "%d;\n" v) h.values;
-  iteri (fun i v ->
+let dump h =
+  let arr = to_array h in
+  Printf.printf "digraph {\n";
+  Array.iteri (fun i v ->
       let is1 = 2*i + 1 in
       let is2 = 2*i + 2 in
-      if is1 < h.size then Printf.printf "  %d -> %d;\n" v (get h.values is1);
-      if is2 < h.size then Printf.printf "  %d -> %d;\n" v (get h.values is2)
-    ) h.values;
-
+      if is1 < h.size then Printf.printf "  %d -> %d;\n" v (arr.(is1));
+      if is2 < h.size then Printf.printf "  %d -> %d;\n" v (arr.(is2));
+    ) arr;
   Printf.printf "}\n"
 
