@@ -1,4 +1,4 @@
-(** {1 - Module implementing (imperative) Binary Heaps *)
+(** Module implementing (imperative) Binary Heaps *)
 
 (** Abstract type for binary heaps *)
 type 'a t
