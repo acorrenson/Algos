@@ -65,8 +65,9 @@ void append_list(void* val, list_t* list) {
 
 static void destroy_cells(cell_t* cell) {
     if (cell != NULL) {
-        destroy_cells(cell->tail);
+        cell_t* next = cell->tail;
         free(cell);
+        destroy_cells(next);
     }
 }
 

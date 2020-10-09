@@ -65,8 +65,9 @@ void append_int_list(int val, int_list_t* list) {
 
 static void destroy_int_cells(int_cell_t* cell) {
     if (cell != NULL) {
-        destroy_int_cells(cell->tail);
+        int_cell_t* next = cell->tail;
         free(cell);
+        destroy_int_cells(next);
     }
 }
 
