@@ -9,7 +9,7 @@ typedef struct int_list_t {
     struct int_cell_t* cell;
 } int_list_t;
 
-/* FONCTIONS */
+/* FUNCTIONS */
 
 // Construction
 

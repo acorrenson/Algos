@@ -13,7 +13,7 @@ typedef struct int_list_t {
     int length;
 } int_list_t;
 
-/* FONCTIONS */
+/* FUNCTIONS */
 
 // Construction
 

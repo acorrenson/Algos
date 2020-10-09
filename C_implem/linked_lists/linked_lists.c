@@ -13,7 +13,7 @@ typedef struct list_t {
     int length;
 } list_t;
 
-/* FONCTIONS */
+/* FUNCTIONS */
 
 // Construction
 
