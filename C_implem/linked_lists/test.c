@@ -17,9 +17,9 @@ int main(int argc, char** argv) {
     }
     // destroy_int_list(list1);
     empty_list(list2);
-    printf("Length of list 1, 2 and 3 : %d, %d, %d\n", length_list(list1), length_list(list2), length_list(list3));
+    printf("Length of list 1, 2 and 3 : %d, %d, %d\n", length_list(tail_list(tail_list(list1))), length_list(list2), length_list(list3));
 
-    print_list_of_int(list1);  // Should print [ 100; 99; ... ; 0 ]
+    print_list_of_int(tail_list(tail_list(list1)));  // Should print [ 98; 97; ... ; 0 ]
     print_list_of_int(list2);  // Should print [ ]
     print_list_of_int(list3);  // Should print [ 0; 1; ... ; 100 ]
     destroy_list(list1);
