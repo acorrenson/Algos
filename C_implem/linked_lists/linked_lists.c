@@ -84,15 +84,25 @@ void empty_list(list_t* list) {
 
 // Function with return
 
-void* head_list(list_t* list) {
-    return list->cell->head;
+void* head_list(list_t* list) {  //list should not be empty
+    if (list->cell == NULL) {
+        fprintf(stderr, "No head : list has a length of 0");
+        exit(1);
+    } else {
+        return list->cell->head;
+    }
 }
 
-list_t* tail_list(list_t* list) {  //list has to not be empty
-    list_t* l_aux = create_empty_list();
-    l_aux->length = list->length - 1;
-    l_aux->cell = list->cell->tail;
-    return l_aux;
+list_t* tail_list(list_t* list) {  //list should not be empty
+    if (list->cell == NULL) {
+        fprintf(stderr, "No tail : list has a length of 0");
+        exit(1);
+    } else {
+        list_t* l_aux = create_empty_list();
+        l_aux->length = list->length - 1;
+        l_aux->cell = list->cell->tail;
+        return l_aux;
+    }
 }
 
 int length_list(list_t* list) {
@@ -112,7 +122,7 @@ void print_list_of_int(list_t* list) {
     printf("[");
     while (list->cell != NULL) {
         val = pop_list(list);
-        printf(" %d%s", *((int*) val), (list->cell != NULL) ? ";" : "");
+        printf(" %d%s", *((int*)val), (list->cell != NULL) ? ";" : "");
     }
     printf(" ]\n");
 }

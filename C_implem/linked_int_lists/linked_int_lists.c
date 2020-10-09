@@ -84,15 +84,25 @@ void empty_int_list(int_list_t* list) {
 
 // Function with return
 
-int head_int_list(int_list_t* list) {
-    return list->cell->head;
+int head_int_list(int_list_t* list) { //list has to not be empty
+    if (list->cell == NULL) {
+        fprintf(stderr, "No head : list has a length of 0");
+        exit(1);
+    } else {
+        return list->cell->head;
+    }
 }
 
 int_list_t* tail_int_list(int_list_t* list) { //list has to not be empty
-    int_list_t* l_aux = create_empty_int_list();
-    l_aux->length = list->length - 1;
-    l_aux->cell = list->cell->tail;
-    return l_aux;
+    if (list->cell == NULL) {
+        fprintf(stderr, "No tail : list has a length of 0");
+        exit(1);
+    } else {
+        int_list_t* l_aux = create_empty_int_list();
+        l_aux->length = list->length - 1;
+        l_aux->cell = list->cell->tail;
+        return l_aux;
+    }
 }
 
 int length_int_list(int_list_t* list) {
