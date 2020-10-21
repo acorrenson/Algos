@@ -1,0 +1,10 @@
+(include_subdirs unqualified)
+
+(library
+  (public_name algos)
+  (modules (:standard \ test)))
+
+(executable
+  (name test)
+  (modules test)
+  (libraries algos))
