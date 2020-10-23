@@ -6,3 +6,6 @@ $(SUBDIRS):
 	@ make -C $@
 
 .PHONY: all $(SUBDIRS)
+
+clean :
+	cd build && find . ! -name .gitkeep -type f -delete
