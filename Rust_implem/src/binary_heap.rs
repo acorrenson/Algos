@@ -10,10 +10,10 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
     pub fn insert(&mut self, key: K, value: V) {
         let index = self.data.len();
         self.data.push((key, value));
-        self.fix_at(index);
+        self.heapify_up_at(index);
     }
 
-    fn fix_at(&mut self, index: usize) {
+    fn heapify_up_at(&mut self, index: usize) {
         if index != 0 {
             let (k, _) = self.data.get(index).expect("invalid index to fix at");
 
@@ -21,12 +21,12 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
             let (parent_k, _) = self.data.get(parent).unwrap();
             if k < parent_k {
                 self.data.swap(index, parent);
-                self.fix_at(parent);
+                self.heapify_up_at(parent);
             }
         }
     }
 
-    fn fix_down_at(&mut self, index: usize) {
+    fn heapify_down_at(&mut self, index: usize) {
         if let Some((k_self, _)) = self.data.get(index) {
             let c1 = 2 * index + 1;
             let c2 = 2 * index + 2;
@@ -37,17 +37,17 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
                     if k_self > k1 || k_self > k2 {
                         if k1 < k2 {
                             self.data.swap(index, c1);
-                            self.fix_down_at(c1);
+                            self.heapify_down_at(c1);
                         } else {
                             self.data.swap(index, c2);
-                            self.fix_down_at(c2);
+                            self.heapify_down_at(c2);
                         }
                     }
                 } else {
                     // The current index only has one child
                     if k_self > k1 {
                         self.data.swap(index, c1);
-                        self.fix_down_at(c1);
+                        self.heapify_down_at(c1);
                     }
                 }
             }
@@ -63,7 +63,7 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
             let last = self.data.len() - 1;
             self.data.swap(0, last);
             let res = self.data.pop();
-            self.fix_down_at(0);
+            self.heapify_down_at(0);
             res
         } else {
             None
