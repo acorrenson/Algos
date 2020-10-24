@@ -55,10 +55,6 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
             }
         }
     }
-
-    pub fn peek_min(&self) -> Option<(&K, &V)> {
-        self.data.get(0).map(|x| (&x.0, &x.1))
-    }
 }
 
 impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapVec<K, V> {
@@ -85,7 +81,6 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapVec<K, V> {
     }
 }
 
-#[derive(Debug)]
 pub enum BinaryHeapRec<K: Ord, V> {
     Node {
         key: K,
@@ -343,7 +338,6 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
         }
     }
 
-    // Makes the minimum go down the tree and pop it off
     fn pop_min(&mut self) -> Option<(K, V)> {
         let res = match self {
             Self::Nil => None,
@@ -393,7 +387,7 @@ mod tests {
     #[test]
     fn heap_sort_vec() {
         use super::BinaryHeap;
-
+      
         let to_sort = [25, 15, 46, 0, 37, 82, 1, 54];
 
         let mut heap = super::BinaryHeapVec::new();
