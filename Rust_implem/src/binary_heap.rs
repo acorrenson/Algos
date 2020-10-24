@@ -391,7 +391,28 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn heap_sort() {
+    fn heap_sort_vec() {
+        use super::BinaryHeap;
+
+        let to_sort = [25, 15, 46, 0, 37, 82, 1, 54];
+
+        let mut heap = super::BinaryHeapVec::new();
+
+        for x in to_sort.iter() {
+            heap.insert(*x, ());
+        }
+
+        let mut sorted = Vec::with_capacity(to_sort.len());
+
+        while let Some((k, _)) = heap.pop_min() {
+            sorted.push(k);
+        }
+
+        assert_eq!(sorted.as_ref(), [0, 1, 15, 25, 37, 46, 54, 82]);
+    }
+
+    #[test]
+    fn heap_sort_rec() {
         use super::BinaryHeap;
 
         let to_sort = [25, 15, 46, 0, 37, 82, 1, 54];
