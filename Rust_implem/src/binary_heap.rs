@@ -26,40 +26,43 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
         }
     }
 
-    pub fn peek_min(&self) -> Option<(&K, &V)> {
-        self.data.get(0).map(|x| (&x.0, &x.1))
-    }
-
-    pub fn pop_min(&mut self) -> Option<(K, V)> {
-        self.pop(0)
-    }
-
-    fn pop(&mut self, index: usize) -> Option<(K, V)> {
-        if index < self.data.len() {
+    fn fix_down_at(&mut self, index: usize) {
+        if let Some((k_self, _)) = self.data.get(index) {
             let c1 = 2 * index + 1;
             let c2 = 2 * index + 2;
 
             if let Some((k1, _)) = self.data.get(c1) {
                 if let Some((k2, _)) = self.data.get(c2) {
                     // The current index has two children
-                    if k1 < k2 {
-                        self.data.swap(index, c1);
-                        self.pop(c1)
-                    } else {
-                        self.data.swap(index, c2);
-                        self.pop(c2)
+                    if k_self > k1 || k_self > k2 {
+                        if k1 < k2 {
+                            self.data.swap(index, c1);
+                            self.fix_down_at(c1);
+                        } else {
+                            self.data.swap(index, c2);
+                            self.fix_down_at(c2);
+                        }
                     }
                 } else {
                     // The current index only has one child
                     self.data.swap(index, c1);
-                    self.pop(c1)
+                    self.fix_down_at(c1)
                 }
-            } else {
-                // The current index is a leaf
-                let n = self.data.len();
-                self.data.swap(index, n - 1);
-                self.data.pop()
             }
+        }
+    }
+
+    pub fn peek_min(&self) -> Option<(&K, &V)> {
+        self.data.get(0).map(|x| (&x.0, &x.1))
+    }
+
+    pub fn pop_min(&mut self) -> Option<(K, V)> {
+        if self.data.len() > 0 {
+            let last = self.data.len() - 1;
+            self.data.swap(0, last);
+            let res = self.data.pop();
+            self.fix_down_at(0);
+            res
         } else {
             None
         }
