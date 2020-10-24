@@ -183,7 +183,7 @@ impl<K: Ord, V> BinomialTree<K, V> {
 mod tests {
     #[test]
     fn binomial_sort() {
-        // This is a dumb use of binomial tree.
+        // This is a dumb use of binomial trees.
         // We are trained professionals, do not attempt at home.
 
         let to_sort = [25, 15, 46, 0, 37, 82, 1, 54];
