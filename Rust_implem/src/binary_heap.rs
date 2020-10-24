@@ -59,18 +59,6 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
     pub fn peek_min(&self) -> Option<(&K, &V)> {
         self.data.get(0).map(|x| (&x.0, &x.1))
     }
-
-    pub fn pop_min(&mut self) -> Option<(K, V)> {
-        if self.data.len() > 0 {
-            let last = self.data.len() - 1;
-            self.data.swap(0, last);
-            let res = self.data.pop();
-            self.fix_down_at(0);
-            res
-        } else {
-            None
-        }
-    }
 }
 
 impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapVec<K, V> {
@@ -85,7 +73,15 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapVec<K, V> {
     }
 
     fn pop_min(&mut self) -> Option<(K, V)> {
-        self.pop(0)
+        if self.data.len() > 0 {
+            let last = self.data.len() - 1;
+            self.data.swap(0, last);
+            let res = self.data.pop();
+            self.fix_down_at(0);
+            res
+        } else {
+            None
+        }
     }
 }
 
@@ -136,6 +132,87 @@ impl<K: Ord, V> BinaryHeapRec<K, V> {
         }
     }
 
+    fn swap_last_and_pop(&mut self, other_key: &mut K, other_val: &mut V) -> Option<(K, V)> {
+        match self {
+            Self::Nil => panic!("attempted to swap empty heap"),
+
+            Self::Node {
+                left: box Self::Nil,
+                ..
+            } => {
+                // The node has no left child so no children
+                self.swap(other_key, other_val);
+                self.destruct()
+            }
+
+            Self::Node {
+                left: left @ box Self::Node { .. },
+                right: box Self::Nil,
+                size,
+                ..
+            } => {
+                *size -= 1;
+                left.swap_last_and_pop(other_key, other_val)
+            }
+
+            Self::Node {
+                left: left @ box Self::Node { .. },
+                right: right @ box Self::Node { .. },
+                size,
+                ..
+            } => {
+                *size -= 1;
+                if left.is_complete() {
+                    right.swap_last_and_pop(other_key, other_val)
+                } else {
+                    left.swap_last_and_pop(other_key, other_val)
+                }
+            }
+        }
+    }
+
+    fn fix_down(&mut self) {
+        match self {
+            Self::Nil => (),
+
+            Self::Node {
+                left: box Self::Nil,
+                ..
+            } => (), // The node has no left child so no children
+
+            Self::Node {
+                left: left @ box Self::Node { .. },
+                right: box Self::Nil,
+                key,
+                value,
+                ..
+            } => {
+                if left.is_key_smaller_than(key) {
+                    left.swap(key, value);
+                    left.fix_down();
+                }
+            }
+
+            Self::Node {
+                left: left @ box Self::Node { .. },
+                right: right @ box Self::Node { .. },
+                key,
+                value,
+                ..
+            } => {
+                if left.is_key_smaller_than(key) || right.is_key_smaller_than(key) {
+                    if left.is_smaller_than(right) {
+                        left.swap(key, value);
+                        left.fix_down();
+                    } else {
+                        right.swap(key, value);
+                        right.fix_down();
+                    }
+                }
+            }
+        }
+    }
+
     fn size(&self) -> u32 {
         match self {
             Self::Node { size, .. } => *size,
@@ -157,6 +234,10 @@ impl<K: Ord, V> BinaryHeapRec<K, V> {
                 *self_key < *other_key
             }
         }
+    }
+
+    fn is_complete(&self) -> bool {
+        (self.size() + 1).is_power_of_two()
     }
 
     fn destruct(&mut self) -> Option<(K, V)> {
@@ -214,19 +295,10 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
                 size,
                 ..
             } => {
-                dbg!(left.size());
                 // The node has two children
-                if (left.size() + 1).is_power_of_two() {
+                if left.is_complete() {
                     // The left tree is complete
                     if right.size() == left.size() {
-                        // The right tree is complete
-                        // Then let's insert in the left tree anyway
-                        /*let (key, value) = if left.is_key_smaller_than(&key) {
-                            (key, value)
-                        } else {
-                            left.replace(key, value).unwrap()
-                        };*/
-
                         left.insert(key, value);
 
                         if left.is_key_smaller_than(self_key) {
@@ -234,13 +306,6 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
                         }
                     } else {
                         // Insert in the right tree
-                        /*
-                        let (key, value) = if right.is_key_smaller_than(&key) {
-                            (key, value)
-                        } else {
-                            right.replace(key, value).unwrap()
-                        };*/
-
                         right.insert(key, value);
 
                         if right.is_key_smaller_than(self_key) {
@@ -249,12 +314,6 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
                     }
                 } else {
                     // Insert in the left tree
-                    /*let (key, value) = if left.is_key_smaller_than(&key) {
-                        (key, value)
-                    } else {
-                        left.replace(key, value).unwrap()
-                    };*/
-
                     left.insert(key, value);
 
                     if left.is_key_smaller_than(self_key) {
@@ -286,11 +345,13 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
 
     // Makes the minimum go down the tree and pop it off
     fn pop_min(&mut self) -> Option<(K, V)> {
-        match self {
+        let res = match self {
+            Self::Nil => None,
+
             Self::Node {
                 left: box Self::Nil,
                 ..
-            } => self.destruct(), // We reached the end, self is the min
+            } => self.destruct(), // The node has no left child so no children
 
             Self::Node {
                 left: left @ box Self::Node { .. },
@@ -300,10 +361,8 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
                 size,
                 ..
             } => {
-                // The node has one child
-                left.swap(key, value);
                 *size -= 1;
-                left.pop_min()
+                left.swap_last_and_pop(key, value)
             }
 
             Self::Node {
@@ -315,21 +374,17 @@ impl<K: Ord, V> BinaryHeap<K, V> for BinaryHeapRec<K, V> {
                 ..
             } => {
                 *size -= 1;
-
-                // The node has two children
-                if right.is_smaller_than(left) {
-                    // Then go down the right tree
-                    right.swap(key, value);
-                    right.pop_min()
+                if left.is_complete() {
+                    right.swap_last_and_pop(key, value)
                 } else {
-                    // Go down the left tree
-                    left.swap(key, value);
-                    left.pop_min()
+                    left.swap_last_and_pop(key, value)
                 }
             }
+        };
 
-            Self::Nil => None,
-        }
+        self.fix_down();
+
+        res
     }
 }
 
@@ -350,7 +405,6 @@ mod tests {
         let mut sorted = Vec::with_capacity(to_sort.len());
 
         while let Some((k, _)) = heap.pop_min() {
-            dbg!(&heap);
             sorted.push(k);
         }
 
