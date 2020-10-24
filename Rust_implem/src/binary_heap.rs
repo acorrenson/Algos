@@ -45,8 +45,10 @@ impl<K: Ord, V> BinaryHeapVec<K, V> {
                     }
                 } else {
                     // The current index only has one child
-                    self.data.swap(index, c1);
-                    self.fix_down_at(c1)
+                    if k_self > k1 {
+                        self.data.swap(index, c1);
+                        self.fix_down_at(c1);
+                    }
                 }
             }
         }
