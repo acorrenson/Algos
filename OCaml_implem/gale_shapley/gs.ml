@@ -18,7 +18,7 @@ let gs (l_apref : int list list) (l_bpref : int list list) =
   let a_table = mk_prop_table l_apref in
 
   (* Getters *)
-  let b_pref b a a' = b_table.(b).(a) < b_table.(b).(a') in
+  let b_prefers b a a' = b_table.(b).(a) < b_table.(b).(a') in
   let a_next a =
     match a_table.(a) with 
     | x::xs -> a_table.(a) <- xs; x
@@ -45,19 +45,19 @@ let gs (l_apref : int list list) (l_bpref : int list list) =
   let rec step = function
     | [] -> ()
     | a::next ->
-      let a_best = a_next a in
-      pp_ask a a_best;
-      if is_free a_best then begin
-        pp_ok a_best;
-        assoc a a_best; step next
+      let best_b_for_a = a_next a in
+      pp_ask a best_b_for_a;
+      if is_free best_b_for_a then begin
+        pp_ok best_b_for_a;
+        assoc a best_b_for_a; step next
       end else begin
-        pp_ko a_best;
-        let b_curr = b_with.(a_best) in
-        if b_pref a_best a b_curr then begin
-          pp_pref a_best a b_curr;
-          assoc a a_best; step (b_curr::next)
+        pp_ko best_b_for_a;
+        let a_with_b = b_with.(best_b_for_a) in
+        if b_prefers best_b_for_a a a_with_b then begin
+          pp_pref best_b_for_a a a_with_b;
+          assoc a best_b_for_a; step (a_with_b::next)
         end else begin
-          pp_pref a_best b_curr a;
+          pp_pref best_b_for_a a_with_b a;
           step (a::next)
         end
       end
