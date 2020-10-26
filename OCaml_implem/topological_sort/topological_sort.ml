@@ -31,3 +31,25 @@ let topological_sort graph =
     order_fun_aux i j sorted_list
   in
   (sorted_list,order_fun)
+
+let kosaraju graph =
+  let strongly_connected_components_list = ref [] in 
+  let current_component = ref [] in 
+  let current_parent = ref (-1) in
+  let pre i =
+    begin
+      if !current_parent = -1 
+      then current_parent := i;
+      current_component := i::(!current_component);
+    end
+  in
+  let post i =
+    if !current_parent = i then 
+      begin
+        strongly_connected_components_list := current_component::(!strongly_connected_components_list);
+        current_component := [];
+        current_parent := -1;
+      end
+  in
+  let _ = dfs graph pre post in 
+  !strongly_connected_components_list
