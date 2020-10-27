@@ -14,6 +14,20 @@ let dfs graph pre post =
   in 
   Array.iteri explore graph
 
+let dfs_ordered graph pre post order_list =
+  let n = Array.length graph in
+  let visited = Array.make n false in 
+  let rec explore i =
+    if not visited.(i) then 
+      begin
+        visited.(i) <- true;
+        pre i;
+        List.iter (fun j -> explore j) graph.(i);
+        post i; 
+      end
+  in 
+  List.iter explore order_list
+
 (* Returns the sorted list of the nodes in the graph and an ordering function *)
 let topological_sort graph = 
   let order_list = ref [] in
@@ -32,7 +46,23 @@ let topological_sort graph =
   in
   (sorted_list,order_fun)
 
+let reverse graph = 
+  let n = Array.length graph in
+  let reversed_graph = Array.make n [] in 
+  let _ =
+  Array.iteri 
+    (fun i list -> 
+       List.iter 
+         (fun j -> 
+            reversed_graph.(j) <- i::(reversed_graph.(j))) 
+         list)
+    graph
+  in
+  reversed_graph
+
 let kosaraju graph =
+  let order_list,_ = topological_sort graph in
+  let reversed_graph = reverse graph in
   let strongly_connected_components_list = ref [] in 
   let current_component = ref [] in 
   let current_parent = ref (-1) in
@@ -46,10 +76,10 @@ let kosaraju graph =
   let post i =
     if !current_parent = i then 
       begin
-        strongly_connected_components_list := current_component::(!strongly_connected_components_list);
+        strongly_connected_components_list := (!current_component)::(!strongly_connected_components_list);
         current_component := [];
         current_parent := -1;
       end
   in
-  let _ = dfs graph pre post in 
+  let _ = dfs_ordered reversed_graph pre post order_list in 
   !strongly_connected_components_list
