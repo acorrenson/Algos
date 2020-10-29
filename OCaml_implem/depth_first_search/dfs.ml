@@ -3,16 +3,16 @@ type directed_graph = (int list) array
 let dfs graph pre post =
   let n = Array.length graph in
   let visited = Array.make n false in 
-  let rec explore i adj_list =
+  let rec explore i =
     if not visited.(i) then 
       begin
         visited.(i) <- true;
         pre i;
-        List.iter (fun j -> explore j graph.(j)) adj_list;
+        List.iter explore graph.(i);
         post i; 
       end
   in 
-  Array.iteri explore graph
+  for i = 0 to (n-1) do explore i done
 
 let dfs_ordered graph pre post order_list =
   let n = Array.length graph in
@@ -22,7 +22,7 @@ let dfs_ordered graph pre post order_list =
       begin
         visited.(i) <- true;
         pre i;
-        List.iter (fun j -> explore j) graph.(i);
+        List.iter explore graph.(i);
         post i; 
       end
   in 
@@ -51,11 +51,11 @@ let reverse graph =
   let reversed_graph = Array.make n [] in 
   let _ =
   Array.iteri 
-    (fun i list -> 
+    (fun i adj_list -> 
        List.iter 
          (fun j -> 
             reversed_graph.(j) <- i::(reversed_graph.(j))) 
-         list)
+         adj_list)
     graph
   in
   reversed_graph
