@@ -4,7 +4,7 @@
 type 'a t
 
 (** Array to binary heap conversion *)
-val of_array : 'a array -> 'a t
+val of_array : 'a array -> ('a -> 'a -> bool) -> 'a t
 
 (** Binary heap to array conversion *)
 val to_array : 'a t -> 'a array

@@ -3,6 +3,7 @@ open Resizable_array
 type 'a t = {
   mutable size : int;
   values : 'a Resizable_array.t;
+  order_fun : 'a -> 'a -> bool;
 }
 
 (* Get the parent of a given index *)
@@ -18,7 +19,7 @@ let sonr i = 2*i + 2
    assuming that subtrees *)
 let rec heapify h i : unit =
   let imax = List.fold_left (fun acc j ->
-      if get h.values j >= get h.values acc
+      if h.order_fun (get h.values j) (get h.values acc)
       then j else acc
     ) i ([sonl i; sonr i] |> List.filter ((>) (h.size)))
   in
@@ -27,11 +28,10 @@ let rec heapify h i : unit =
     heapify h imax
   end
 
-
-let of_array a =
+let of_array a f =
   let ra = Resizable_array.of_array a in
   let l = Resizable_array.length ra in
-  let h = {size = l; values = ra} in
+  let h = {size = l; values = ra; order_fun = f} in
   for i = (l/2) - 1 downto 0 do
     heapify h i
   done;
@@ -41,7 +41,7 @@ let sift_up h i =
   let p = ref (parent i) in
   let c = ref i in
   let v = get h.values i in
-  while (!c > 0 && get h.values !p <= v) do
+  while (!c > 0 && h.order_fun v (get h.values !p)) do
     swap h.values !p !c;
     p := parent !p;
     c := parent !c;

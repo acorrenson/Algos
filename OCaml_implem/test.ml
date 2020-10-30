@@ -16,7 +16,7 @@ let _ =
   Printf.printf "Min (2) := %d\n" m2;
   Printf.printf "Min (3) := %d\n" m3
 
-let h = Heap.of_array [| 1; 2; 3 |]
+let h = Heap.of_array [| 1; 2; 3 |] (>)
 
 let _ =
   Heap.(
