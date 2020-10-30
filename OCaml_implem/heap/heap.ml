@@ -65,6 +65,9 @@ let extract h =
 let to_array h =
   Array.init h.size (get h.values)
 
+let is_empty h =
+  h.size = 0
+
 let dump h =
   let arr = to_array h in
   Printf.printf "digraph {\n";
