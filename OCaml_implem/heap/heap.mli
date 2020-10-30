@@ -12,5 +12,8 @@ val to_array : 'a t -> 'a array
 (** Insert a value *)
 val insert : 'a t -> 'a -> unit
 
+(** Extract the root value *)
+val extract : 'a t -> 'a
+
 (** Dump a binary heap in stdout (in dot format) *)
 val dump : int t -> unit

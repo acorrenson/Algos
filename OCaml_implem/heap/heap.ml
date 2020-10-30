@@ -52,6 +52,16 @@ let insert h v =
   sift_up h h.size;
   h.size <- h.size + 1
 
+let extract h =
+  if h.size = 0 then failwith "Heap is of size 0 : cannot extract root"
+  else begin
+    let root = get h.values 0 in
+    swap h.values 0 (h.size -1);
+    h.size <- h.size -1;
+    heapify h 0;
+    root
+  end
+
 let to_array h =
   Array.init h.size (get h.values)
 
