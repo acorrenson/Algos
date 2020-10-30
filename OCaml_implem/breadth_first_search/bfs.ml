@@ -8,10 +8,7 @@ type distance = Infinite | Finite of int
 
 type predecessor = int option
 
-let priority_couple_order_fun couple1 couple2 =
-  let p1,_ = couple1 
-  and p2,_ = couple2 
-  in p1 < p2
+let priority_couple_order_fun (p1, _) (p2, _) = p1 < p2
 
 let distance_order_fun distance1 distance2 =
   match distance1,distance2 with 
