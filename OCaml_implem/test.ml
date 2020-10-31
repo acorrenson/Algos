@@ -39,7 +39,31 @@ let _ =
   Printf.printf "Min (2) := %d\n" m2;
   Printf.printf "Min (3) := %d\n" m3
 
-let h = Heap.of_array [| 1; 2; 3 |]
+let g2 = 
+  [|[(4,1);(2,2)];
+    [(2,3);(3,4);(3,2)];
+    [(1,1);(4,3);(5,4)];
+    [];
+    [(1,3)];
+    []|]
+
+let _ = 
+  let distance_array,pred = Bfs.dijkstra g2 0 in 
+  assert (distance_array.(0) = Finite 0);
+  assert (distance_array.(1) = Finite 3);
+  assert (distance_array.(2) = Finite 2);
+  assert (distance_array.(3) = Finite 5);
+  assert (distance_array.(4) = Finite 6);
+  assert (distance_array.(5) = Infinite);
+  assert (pred.(0) = None);
+  assert (pred.(1) = Some 2);
+  assert (pred.(2) = Some 0);
+  assert (pred.(3) = Some 1);
+  assert (pred.(4) = Some 1);
+  assert (pred.(5) = None);
+  Printf.printf "Dijkstra's algorithm on g2 is correct\n"
+
+let h = Heap.of_array [| 1; 2; 3 |] (>)
 
 let _ =
   Heap.(
